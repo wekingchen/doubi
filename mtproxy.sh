@@ -85,26 +85,32 @@ Download_mtproxy(){
 	rm -rf '/tmp/mtproxy'
 }
 Download_secret(){
+	[[ -e "${mtproxy_secret}" ]] && rm -rf "${mtproxy_secret}"
 	wget --no-check-certificate -q "https://core.telegram.org/getProxySecret" -O "${mtproxy_secret}"
-	[[ ! -e "${mtproxy_secret}" ]] && echo -e "${Error} MTProxy Secret下载失败!" && exit 1
+	[[ ! -e "${mtproxy_secret}" ]] && echo -e "${Error} MTProxy Secret下载失败! 脚本将会继续安装但会启动失败，请尝试手动下载：${Green_font_prefix}wget --no-check-certificate -q \"https://core.telegram.org/getProxySecret\" -O \"${mtproxy_secret}\"${Font_color_suffix}"
 	echo -e "${Info} MTProxy Secret下载成功!"
 }
 Download_multi(){
+	[[ -e "${mtproxy_multi}" ]] && rm -rf "${mtproxy_multi}"
 	wget --no-check-certificate -q "https://core.telegram.org/getProxyConfig" -O "${mtproxy_multi}"
-	[[ ! -e "${mtproxy_multi}" ]] && echo -e "${Error} MTProxy Multi下载失败!" && exit 1
+	[[ ! -e "${mtproxy_multi}" ]] && echo -e "${Error} MTProxy Multi下载失败!脚本将会继续安装但会启动失败，请尝试手动下载：${Green_font_prefix}wget --no-check-certificate -q \"https://core.telegram.org/getProxyConfig\" -O \"${mtproxy_multi}\"${Font_color_suffix}"
 	echo -e "${Info} MTProxy Secret下载成功!"
 }
 Service_mtproxy(){
 	if [[ ${release} = "centos" ]]; then
-		if ! wget --no-check-certificate "https://raw.githubusercontent.com/ToyoDAdoubi/doubi/master/other/mtproxy_centos" -O /etc/init.d/mtproxy; then
-			echo -e "${Error} MTProxy服务 管理脚本下载失败 !" && exit 1
+		if ! wget --no-check-certificate "https://raw.githubusercontent.com/ToyoDAdoubi/doubi/master/service/mtproxy_centos" -O /etc/init.d/mtproxy; then
+			echo -e "${Error} MTProxy服务 管理脚本下载失败 !"
+			rm -rf "${file}"
+			exit 1
 		fi
 		chmod +x "/etc/init.d/mtproxy"
 		chkconfig --add mtproxy
 		chkconfig mtproxy on
 	else
-		if ! wget --no-check-certificate "https://raw.githubusercontent.com/ToyoDAdoubi/doubi/master/other/mtproxy_debian" -O /etc/init.d/mtproxy; then
-			echo -e "${Error} MTProxy服务 管理脚本下载失败 !" && exit 1
+		if ! wget --no-check-certificate "https://raw.githubusercontent.com/ToyoDAdoubi/doubi/master/service/mtproxy_debian" -O /etc/init.d/mtproxy; then
+			echo -e "${Error} MTProxy服务 管理脚本下载失败 !"
+			rm -rf "${file}"
+			exit 1
 		fi
 		chmod +x "/etc/init.d/mtproxy"
 		update-rc.d -f mtproxy defaults
@@ -157,9 +163,9 @@ Set_port(){
 	while true
 		do
 		echo -e "请输入 MTProxy 端口 [1-65535]"
-		stty erase '^H' && read -p "(默认: 7000):" mtp_port
+		read -e -p "(默认: 7000):" mtp_port
 		[[ -z "${mtp_port}" ]] && mtp_port="7000"
-		expr ${mtp_port} + 0 &>/dev/null
+		echo $((${mtp_port}+0)) &>/dev/null
 		if [[ $? -eq 0 ]]; then
 			if [[ ${mtp_port} -ge 1 ]] && [[ ${mtp_port} -le 65535 ]]; then
 				echo && echo "========================"
@@ -178,7 +184,7 @@ Set_passwd(){
 	while true
 		do
 		echo "请输入 MTProxy 密匙（手动输入必须为32位，[0-9][a-z][A-Z]，建议随机生成）"
-		stty erase '^H' && read -p "(避免出错，强烈推荐随机生成，直接回车):" mtp_passwd
+		read -e -p "(避免出错，强烈推荐随机生成，直接回车):" mtp_passwd
 		if [[ -z "${mtp_passwd}" ]]; then
 			mtp_passwd=$(date +%s%N | md5sum | head -c 32)
 		else
@@ -192,7 +198,7 @@ Set_passwd(){
 }
 Set_tag(){
 	echo "请输入 MTProxy 的 TAG标签（TAG标签只有在通过官方机器人 @MTProxybot 分享代理账号后才会获得，不清楚请留空回车）"
-	stty erase '^H' && read -p "(默认：回车跳过):" mtp_tag
+	read -e -p "(默认：回车跳过):" mtp_tag
 	if [[ ! -z "${mtp_tag}" ]]; then
 		echo && echo "========================"
 		echo -e "	TAG : ${Red_background_prefix} ${mtp_tag} ${Font_color_suffix}"
@@ -202,8 +208,8 @@ Set_tag(){
 Set_nat(){
 	echo -e "\n${Green_font_prefix}当前服务器所有网卡信息：${Font_color_suffix}\n"
 	ifconfig
-	echo "如果本机是NAT服务器（谷歌云、微软云、阿里云等），则请输入你的服务器内网IP，否则会导致无法使用。如果不是请直接回车！"
-	stty erase '^H' && read -p "(默认：回车跳过):" mtp_nat
+	echo "如果本机是NAT服务器（谷歌云、微软云、阿里云等，网卡绑定的IP为 10.xx.xx.xx 开头的），则请输入你的服务器内网IP，否则会导致无法使用。如果不是请直接回车！"
+	read -e -p "(默认：回车跳过):" mtp_nat
 	if [[ -z "${mtp_nat}" ]]; then
 		mtp_nat=""
 	else
@@ -225,7 +231,7 @@ Set_mtproxy(){
 ————————————————
  ${Green_font_prefix}6.${Font_color_suffix}  定时 更新 Telegram IP段
  ${Green_font_prefix}7.${Font_color_suffix}  监控 运行状态" && echo
-	stty erase '^H' && read -p "(默认: 取消):" mtp_modify
+	read -e -p "(默认: 取消):" mtp_modify
 	[[ -z "${mtp_modify}" ]] && echo "已取消..." && exit 1
 	if [[ ${mtp_modify} == "1" ]]; then
 		Read_config
@@ -330,7 +336,7 @@ Restart_mtproxy(){
 }
 Update_mtproxy(){
 	echo -e "${Tip} 因为官方无最新版本号，所以无法对比版本，请自行判断是否需要更新。是否更新？[Y/n]"
-	stty erase '^H' && read -p "(默认: y):" yn
+	read -e -p "(默认: y):" yn
 	[[ -z "${yn}" ]] && yn="y"
 	if [[ ${yn} == [Yy] ]]; then
 		check_installed_status
@@ -347,7 +353,7 @@ Uninstall_mtproxy(){
 	check_installed_status
 	echo "确定要卸载 MTProxy ? (y/N)"
 	echo
-	stty erase '^H' && read -p "(默认: n):" unyn
+	read -e -p "(默认: n):" unyn
 	[[ -z ${unyn} ]] && unyn="n"
 	if [[ ${unyn} == [Yy] ]]; then
 		check_pid
@@ -455,7 +461,7 @@ View_user_connection_info(){
 	echo && echo -e "请选择要显示的格式：
  ${Green_font_prefix}1.${Font_color_suffix} 显示 IP 格式
  ${Green_font_prefix}2.${Font_color_suffix} 显示 IP+IP归属地 格式" && echo
-	stty erase '^H' && read -p "(默认: 1):" mtproxy_connection_info
+	read -e -p "(默认: 1):" mtproxy_connection_info
 	[[ -z "${mtproxy_connection_info}" ]] && mtproxy_connection_info="1"
 	if [[ "${mtproxy_connection_info}" == "1" ]]; then
 		View_user_connection_info_1 ""
@@ -496,7 +502,7 @@ Set_crontab_monitor_mtproxy(){
 	if [[ -z "${crontab_monitor_mtproxy_status}" ]]; then
 		echo && echo -e "当前监控模式: ${Red_font_prefix}未开启${Font_color_suffix}" && echo
 		echo -e "确定要开启 ${Green_font_prefix}MTProxy 服务端运行状态监控${Font_color_suffix} 功能吗？(当进程关闭则自动启动 MTProxy 服务端)[Y/n]"
-		stty erase '^H' && read -p "(默认: y):" crontab_monitor_mtproxy_status_ny
+		read -e -p "(默认: y):" crontab_monitor_mtproxy_status_ny
 		[[ -z "${crontab_monitor_mtproxy_status_ny}" ]] && crontab_monitor_mtproxy_status_ny="y"
 		if [[ ${crontab_monitor_mtproxy_status_ny} == [Yy] ]]; then
 			crontab_monitor_mtproxy_cron_start
@@ -506,7 +512,7 @@ Set_crontab_monitor_mtproxy(){
 	else
 		echo && echo -e "当前监控模式: ${Green_font_prefix}已开启${Font_color_suffix}" && echo
 		echo -e "确定要关闭 ${Red_font_prefix}MTProxy 服务端运行状态监控${Font_color_suffix} 功能吗？(当进程关闭则自动启动 MTProxy 服务端)[y/N]"
-		stty erase '^H' && read -p "(默认: n):" crontab_monitor_mtproxy_status_ny
+		read -e -p "(默认: n):" crontab_monitor_mtproxy_status_ny
 		[[ -z "${crontab_monitor_mtproxy_status_ny}" ]] && crontab_monitor_mtproxy_status_ny="n"
 		if [[ ${crontab_monitor_mtproxy_status_ny} == [Yy] ]]; then
 			crontab_monitor_mtproxy_cron_stop
@@ -564,7 +570,7 @@ Set_crontab_update_mtproxy(){
 	if [[ -z "${crontab_update_mtproxy_status}" ]]; then
 		echo && echo -e "当前自动更新 Telegram IP段功能: ${Red_font_prefix}未开启${Font_color_suffix}" && echo
 		echo -e "确定要开启 ${Green_font_prefix}MTProxy 自动更新 Telegram IP段${Font_color_suffix} 功能吗？[Y/n]"
-		stty erase '^H' && read -p "(默认: y):" crontab_update_mtproxy_status_ny
+		read -e -p "(默认: y):" crontab_update_mtproxy_status_ny
 		[[ -z "${crontab_update_mtproxy_status_ny}" ]] && crontab_update_mtproxy_status_ny="y"
 		if [[ ${crontab_update_mtproxy_status_ny} == [Yy] ]]; then
 			crontab_update_mtproxy_cron_start
@@ -574,7 +580,7 @@ Set_crontab_update_mtproxy(){
 	else
 		echo && echo -e "当前自动更新 Telegram IP段功能: ${Green_font_prefix}已开启${Font_color_suffix}" && echo
 		echo -e "确定要关闭 ${Red_font_prefix}MTProxy 自动更新 Telegram IP段${Font_color_suffix} 功能吗？[y/N]"
-		stty erase '^H' && read -p "(默认: n):" crontab_update_mtproxy_status_ny
+		read -e -p "(默认: n):" crontab_update_mtproxy_status_ny
 		[[ -z "${crontab_update_mtproxy_status_ny}" ]] && crontab_update_mtproxy_status_ny="n"
 		if [[ ${crontab_update_mtproxy_status_ny} == [Yy] ]]; then
 			crontab_update_mtproxy_cron_stop
@@ -642,24 +648,13 @@ Set_iptables(){
 	fi
 }
 Update_Shell(){
-	softs_domain=$(wget --no-check-certificate -qO- -t1 -T3 "https://doub.pw/new_softs.txt")
-	if [[ -z ${softs_domain} ]]; then
-		softs_domain="https://raw.githubusercontent.com/ToyoDAdoubi/doubi/master/"
-	else
-		softs_domain="https://${softs_domain}/Bash/"
-	fi
-	sh_new_ver=$(wget --no-check-certificate -qO- -t1 -T3 "${softs_domain}mtproxy.sh"|grep 'sh_ver="'|awk -F "=" '{print $NF}'|sed 's/\"//g'|head -1) && sh_new_type="softs"
-	[[ -z ${sh_new_ver} ]] && sh_new_ver=$(wget --no-check-certificate -qO- -t1 -T3 "https://raw.githubusercontent.com/ToyoDAdoubi/doubi/master/mtproxy.sh"|grep 'sh_ver="'|awk -F "=" '{print $NF}'|sed 's/\"//g'|head -1) && sh_new_type="github"
-	[[ -z ${sh_new_ver} ]] && echo -e "${Error} 无法链接到 逗比云 或 Github !" && exit 0
+	sh_new_ver=$(wget --no-check-certificate -qO- -t1 -T3 "https://raw.githubusercontent.com/ToyoDAdoubi/doubi/master/mtproxy.sh"|grep 'sh_ver="'|awk -F "=" '{print $NF}'|sed 's/\"//g'|head -1) && sh_new_type="github"
+	[[ -z ${sh_new_ver} ]] && echo -e "${Error} 无法链接到 Github !" && exit 0
 	if [[ -e "/etc/init.d/mtproxy" ]]; then
 		rm -rf /etc/init.d/mtproxy
 		Service_mtproxy
 	fi
-	if [[ ${sh_new_type} == "softs" ]]; then
-		wget -N --no-check-certificate "${softs_domain}mtproxy.sh" && chmod +x mtproxy.sh
-	else
-		wget -N --no-check-certificate "https://raw.githubusercontent.com/ToyoDAdoubi/doubi/master/mtproxy.sh" && chmod +x mtproxy.sh
-	fi
+	wget -N --no-check-certificate "https://raw.githubusercontent.com/ToyoDAdoubi/doubi/master/mtproxy.sh" && chmod +x mtproxy.sh
 	echo -e "脚本已更新为最新版本[ ${sh_new_ver} ] !(注意：因为更新方式为直接覆盖当前运行的脚本，所以可能下面会提示一些报错，无视即可)" && exit 0
 }
 check_sys
@@ -698,7 +693,7 @@ else
 		echo -e " 当前状态: ${Red_font_prefix}未安装${Font_color_suffix}"
 	fi
 	echo
-	stty erase '^H' && read -p " 请输入数字 [0-10]:" num
+	read -e -p " 请输入数字 [0-10]:" num
 	case "$num" in
 		0)
 		Update_Shell

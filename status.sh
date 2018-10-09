@@ -5,12 +5,12 @@ export PATH
 #=================================================
 #	System Required: CentOS/Debian/Ubuntu
 #	Description: ServerStatus client + server
-#	Version: 1.0.13
+#	Version: 1.0.15
 #	Author: Toyo
 #	Blog: https://doub.io/shell-jc3/
 #=================================================
 
-sh_ver="1.0.13"
+sh_ver="1.0.15"
 filepath=$(cd "$(dirname "$0")"; pwd)
 file_1=$(echo -e "${filepath}"|awk -F "$0" '{print $1}')
 file="/usr/local/ServerStatus"
@@ -127,14 +127,14 @@ Download_Server_Status_client(){
 }
 Service_Server_Status_server(){
 	if [[ ${release} = "centos" ]]; then
-		if ! wget --no-check-certificate "https://raw.githubusercontent.com/ToyoDAdoubi/doubi/master/other/server_status_server_centos" -O /etc/init.d/status-server; then
+		if ! wget --no-check-certificate "https://raw.githubusercontent.com/ToyoDAdoubi/doubi/master/service/server_status_server_centos" -O /etc/init.d/status-server; then
 			echo -e "${Error} ServerStatus 服务端服务管理脚本下载失败 !" && exit 1
 		fi
 		chmod +x /etc/init.d/status-server
 		chkconfig --add status-server
 		chkconfig status-server on
 	else
-		if ! wget --no-check-certificate "https://raw.githubusercontent.com/ToyoDAdoubi/doubi/master/other/server_status_server_debian" -O /etc/init.d/status-server; then
+		if ! wget --no-check-certificate "https://raw.githubusercontent.com/ToyoDAdoubi/doubi/master/service/server_status_server_debian" -O /etc/init.d/status-server; then
 			echo -e "${Error} ServerStatus 服务端服务管理脚本下载失败 !" && exit 1
 		fi
 		chmod +x /etc/init.d/status-server
@@ -144,14 +144,14 @@ Service_Server_Status_server(){
 }
 Service_Server_Status_client(){
 	if [[ ${release} = "centos" ]]; then
-		if ! wget --no-check-certificate "https://raw.githubusercontent.com/ToyoDAdoubi/doubi/master/other/server_status_client_centos" -O /etc/init.d/status-client; then
+		if ! wget --no-check-certificate "https://raw.githubusercontent.com/ToyoDAdoubi/doubi/master/service/server_status_client_centos" -O /etc/init.d/status-client; then
 			echo -e "${Error} ServerStatus 客户端服务管理脚本下载失败 !" && exit 1
 		fi
 		chmod +x /etc/init.d/status-client
 		chkconfig --add status-client
 		chkconfig status-client on
 	else
-		if ! wget --no-check-certificate "https://raw.githubusercontent.com/ToyoDAdoubi/doubi/master/other/server_status_client_debian" -O /etc/init.d/status-client; then
+		if ! wget --no-check-certificate "https://raw.githubusercontent.com/ToyoDAdoubi/doubi/master/service/server_status_client_debian" -O /etc/init.d/status-client; then
 			echo -e "${Error} ServerStatus 客户端服务管理脚本下载失败 !" && exit 1
 		fi
 		chmod +x /etc/init.d/status-client
@@ -249,11 +249,11 @@ Set_server(){
 	if [[ ${mode} == "server" ]]; then
 		echo -e "请输入 ServerStatus 服务端中网站要设置的 域名[server]
 默认为本机IP为域名，例如输入: toyoo.pw ，如果要使用本机IP，请留空直接回车"
-		stty erase '^H' && read -p "(默认: 本机IP):" server_s
+		read -e -p "(默认: 本机IP):" server_s
 		[[ -z "$server_s" ]] && server_s=""
 	else
 		echo -e "请输入 ServerStatus 服务端的 IP/域名[server]"
-		stty erase '^H' && read -p "(默认: 127.0.0.1):" server_s
+		read -e -p "(默认: 127.0.0.1):" server_s
 		[[ -z "$server_s" ]] && server_s="127.0.0.1"
 	fi
 	
@@ -265,9 +265,9 @@ Set_server_http_port(){
 	while true
 		do
 		echo -e "请输入 ServerStatus 服务端中网站要设置的 域名/IP的端口[1-65535]（如果是域名的话，一般用 80 端口）"
-		stty erase '^H' && read -p "(默认: 8888):" server_http_port_s
+		read -e -p "(默认: 8888):" server_http_port_s
 		[[ -z "$server_http_port_s" ]] && server_http_port_s="8888"
-		expr ${server_http_port_s} + 0 &>/dev/null
+		echo $((${server_http_port_s}+0)) &>/dev/null
 		if [[ $? -eq 0 ]]; then
 			if [[ ${server_http_port_s} -ge 1 ]] && [[ ${server_http_port_s} -le 65535 ]]; then
 				echo && echo "	================================================"
@@ -286,9 +286,9 @@ Set_server_port(){
 	while true
 		do
 		echo -e "请输入 ServerStatus 服务端监听的端口[1-65535]（用于服务端接收客户端消息的端口，客户端要填写这个端口）"
-		stty erase '^H' && read -p "(默认: 35601):" server_port_s
+		read -e -p "(默认: 35601):" server_port_s
 		[[ -z "$server_port_s" ]] && server_port_s="35601"
-		expr ${server_port_s} + 0 &>/dev/null
+		echo $((${server_port_s}+0)) &>/dev/null
 		if [[ $? -eq 0 ]]; then
 			if [[ ${server_port_s} -ge 1 ]] && [[ ${server_port_s} -le 65535 ]]; then
 				echo && echo "	================================================"
@@ -311,7 +311,7 @@ Set_username(){
 	else
 		echo -e "请输入 ServerStatus 服务端中对应配置的用户名[username]（字母/数字，不可与其他账号重复）"
 	fi
-	stty erase '^H' && read -p "(默认: 取消):" username_s
+	read -e -p "(默认: 取消):" username_s
 	[[ -z "$username_s" ]] && echo "已取消..." && exit 0
 	echo && echo "	================================================"
 	echo -e "	账号[username]: ${Red_background_prefix} ${username_s} ${Font_color_suffix}"
@@ -325,7 +325,7 @@ Set_password(){
 	else
 		echo -e "请输入 ServerStatus 服务端中对应配置的密码[password]（字母/数字）"
 	fi
-	stty erase '^H' && read -p "(默认: doub.io):" password_s
+	read -e -p "(默认: doub.io):" password_s
 	[[ -z "$password_s" ]] && password_s="doub.io"
 	echo && echo "	================================================"
 	echo -e "	密码[password]: ${Red_background_prefix} ${password_s} ${Font_color_suffix}"
@@ -333,7 +333,7 @@ Set_password(){
 }
 Set_name(){
 	echo -e "请输入 ServerStatus 服务端要设置的节点名称[name]（支持中文，前提是你的系统和SSH工具支持中文输入，仅仅是个名字）"
-	stty erase '^H' && read -p "(默认: Server 01):" name_s
+	read -e -p "(默认: Server 01):" name_s
 	[[ -z "$name_s" ]] && name_s="Server 01"
 	echo && echo "	================================================"
 	echo -e "	节点名称[name]: ${Red_background_prefix} ${name_s} ${Font_color_suffix}"
@@ -341,7 +341,7 @@ Set_name(){
 }
 Set_type(){
 	echo -e "请输入 ServerStatus 服务端要设置的节点虚拟化类型[type]（例如 OpenVZ / KVM）"
-	stty erase '^H' && read -p "(默认: KVM):" type_s
+	read -e -p "(默认: KVM):" type_s
 	[[ -z "$type_s" ]] && type_s="KVM"
 	echo && echo "	================================================"
 	echo -e "	虚拟化类型[type]: ${Red_background_prefix} ${type_s} ${Font_color_suffix}"
@@ -349,7 +349,7 @@ Set_type(){
 }
 Set_location(){
 	echo -e "请输入 ServerStatus 服务端要设置的节点位置[location]（支持中文，前提是你的系统和SSH工具支持中文输入）"
-	stty erase '^H' && read -p "(默认: Hong Kong):" location_s
+	read -e -p "(默认: Hong Kong):" location_s
 	[[ -z "$location_s" ]] && location_s="Hong Kong"
 	echo && echo "	================================================"
 	echo -e "	节点位置[location]: ${Red_background_prefix} ${location_s} ${Font_color_suffix}"
@@ -385,7 +385,7 @@ Set_ServerStatus_server(){
  ${Green_font_prefix} 9.${Font_color_suffix} 启用/禁用 节点配置
 ————————
  ${Green_font_prefix}10.${Font_color_suffix} 修改 服务端监听端口" && echo
-	stty erase '^H' && read -p "(默认: 取消):" server_num
+	read -e -p "(默认: 取消):" server_num
 	[[ -z "${server_num}" ]] && echo "已取消..." && exit 1
 	if [[ ${server_num} == "1" ]]; then
 		Add_ServerStatus_server
@@ -420,11 +420,11 @@ List_ServerStatus_server(){
 	conf_text=$(${jq_file} '.servers' ${server_conf}|${jq_file} ".[]|.username"|sed 's/\"//g')
 	conf_text_total=$(echo -e "${conf_text}"|wc -l)
 	[[ ${conf_text_total} = "0" ]] && echo -e "${Error} 没有发现 一个节点配置，请检查 !" && exit 1
-	conf_text_total_a=$(expr $conf_text_total - 1)
+	conf_text_total_a=$(echo $((${conf_text_total}-1)))
 	conf_list_all=""
 	for((integer = 0; integer <= ${conf_text_total_a}; integer++))
 	do
-		now_text=$(${jq_file} '.servers' ${server_conf}|${jq_file} ".[${integer}]"|sed 's/\"//g;s/,//g'|sed '$d;1d')
+		now_text=$(${jq_file} '.servers' ${server_conf}|${jq_file} ".[${integer}]"|sed 's/\"//g;s/,$//g'|sed '$d;1d')
 		now_text_username=$(echo -e "${now_text}"|grep "username"|awk -F ": " '{print $2}')
 		now_text_password=$(echo -e "${now_text}"|grep "password"|awk -F ": " '{print $2}')
 		now_text_name=$(echo -e "${now_text}"|grep "name"|grep -v "username"|awk -F ": " '{print $2}')
@@ -460,17 +460,17 @@ Del_ServerStatus_server(){
 	List_ServerStatus_server
 	[[ "${conf_text_total}" = "1" ]] && echo -e "${Error} 节点配置仅剩 1个，不能删除 !" && exit 1
 	echo -e "请输入要删除的节点用户名"
-	stty erase '^H' && read -p "(默认: 取消):" del_server_username
+	read -e -p "(默认: 取消):" del_server_username
 	[[ -z "${del_server_username}" ]] && echo -e "已取消..." && exit 1
 	del_username=`cat -n ${server_conf}|grep '"username": "'"${del_server_username}"'"'|awk '{print $1}'`
 	if [[ ! -z ${del_username} ]]; then
-		del_username_min=$(expr $del_username - 1)
-		del_username_max=$(expr $del_username + 7)
+		del_username_min=$(echo $((${del_username}-1)))
+		del_username_max=$(echo $((${del_username}+7)))
 		del_username_max_text=$(sed -n "${del_username_max}p" ${server_conf})
 		del_username_max_text_last=`echo ${del_username_max_text:((${#del_username_max_text} - 1))}`
 		if [[ ${del_username_max_text_last} != "," ]]; then
-			del_list_num=$(expr $del_username_min - 1)
-			sed -i "${del_list_num}s/,//g" ${server_conf}
+			del_list_num=$(echo $((${del_username_min}-1)))
+			sed -i "${del_list_num}s/,$//g" ${server_conf}
 		fi
 		sed -i "${del_username_min},${del_username_max}d" ${server_conf}
 		echo -e "${Info} 节点删除成功 ${Green_font_prefix}[ 节点用户名: ${del_server_username} ]${Font_color_suffix} "
@@ -481,7 +481,7 @@ Del_ServerStatus_server(){
 Modify_ServerStatus_server_username(){
 	List_ServerStatus_server
 	echo -e "请输入要修改的节点用户名"
-	stty erase '^H' && read -p "(默认: 取消):" manually_username
+	read -e -p "(默认: 取消):" manually_username
 	[[ -z "${manually_username}" ]] && echo -e "已取消..." && exit 1
 	Set_username_num=$(cat -n ${server_conf}|grep '"username": "'"${manually_username}"'"'|awk '{print $1}')
 	if [[ ! -z ${Set_username_num} ]]; then
@@ -497,13 +497,13 @@ Modify_ServerStatus_server_username(){
 Modify_ServerStatus_server_password(){
 	List_ServerStatus_server
 	echo -e "请输入要修改的节点用户名"
-	stty erase '^H' && read -p "(默认: 取消):" manually_username
+	read -e -p "(默认: 取消):" manually_username
 	[[ -z "${manually_username}" ]] && echo -e "已取消..." && exit 1
 	Set_username_num=$(cat -n ${server_conf}|grep '"username": "'"${manually_username}"'"'|awk '{print $1}')
 	if [[ ! -z ${Set_username_num} ]]; then
 		Set_password
-		Set_password_num_a=$(expr $Set_username_num + 1)
-		Set_password_num_text=$(sed -n "${Set_password_num_a}p" ${server_conf}|sed 's/\"//g;s/,//g'|awk -F ": " '{print $2}')
+		Set_password_num_a=$(echo $((${Set_username_num}+1)))
+		Set_password_num_text=$(sed -n "${Set_password_num_a}p" ${server_conf}|sed 's/\"//g;s/,$//g'|awk -F ": " '{print $2}')
 		sed -i "${Set_password_num_a}"'s/"password": "'"${Set_password_num_text}"'"/"password": "'"${password_s}"'"/g' ${server_conf}
 		echo -e "${Info} 修改成功 [ 原节点密码: ${Set_password_num_text}, 新节点密码: ${password_s} ]"
 	else
@@ -513,13 +513,13 @@ Modify_ServerStatus_server_password(){
 Modify_ServerStatus_server_name(){
 	List_ServerStatus_server
 	echo -e "请输入要修改的节点用户名"
-	stty erase '^H' && read -p "(默认: 取消):" manually_username
+	read -e -p "(默认: 取消):" manually_username
 	[[ -z "${manually_username}" ]] && echo -e "已取消..." && exit 1
 	Set_username_num=$(cat -n ${server_conf}|grep '"username": "'"${manually_username}"'"'|awk '{print $1}')
 	if [[ ! -z ${Set_username_num} ]]; then
 		Set_name
-		Set_name_num_a=$(expr $Set_username_num + 2)
-		Set_name_num_a_text=$(sed -n "${Set_name_num_a}p" ${server_conf}|sed 's/\"//g;s/,//g'|awk -F ": " '{print $2}')
+		Set_name_num_a=$(echo $((${Set_username_num}+2)))
+		Set_name_num_a_text=$(sed -n "${Set_name_num_a}p" ${server_conf}|sed 's/\"//g;s/,$//g'|awk -F ": " '{print $2}')
 		sed -i "${Set_name_num_a}"'s/"name": "'"${Set_name_num_a_text}"'"/"name": "'"${name_s}"'"/g' ${server_conf}
 		echo -e "${Info} 修改成功 [ 原节点名称: ${Set_name_num_a_text}, 新节点名称: ${name_s} ]"
 	else
@@ -529,13 +529,13 @@ Modify_ServerStatus_server_name(){
 Modify_ServerStatus_server_type(){
 	List_ServerStatus_server
 	echo -e "请输入要修改的节点用户名"
-	stty erase '^H' && read -p "(默认: 取消):" manually_username
+	read -e -p "(默认: 取消):" manually_username
 	[[ -z "${manually_username}" ]] && echo -e "已取消..." && exit 1
 	Set_username_num=$(cat -n ${server_conf}|grep '"username": "'"${manually_username}"'"'|awk '{print $1}')
 	if [[ ! -z ${Set_username_num} ]]; then
 		Set_type
-		Set_type_num_a=$(expr $Set_username_num + 3)
-		Set_type_num_a_text=$(sed -n "${Set_type_num_a}p" ${server_conf}|sed 's/\"//g;s/,//g'|awk -F ": " '{print $2}')
+		Set_type_num_a=$(echo $((${Set_username_num}+3)))
+		Set_type_num_a_text=$(sed -n "${Set_type_num_a}p" ${server_conf}|sed 's/\"//g;s/,$//g'|awk -F ": " '{print $2}')
 		sed -i "${Set_type_num_a}"'s/"type": "'"${Set_type_num_a_text}"'"/"type": "'"${type_s}"'"/g' ${server_conf}
 		echo -e "${Info} 修改成功 [ 原节点虚拟化: ${Set_type_num_a_text}, 新节点虚拟化: ${type_s} ]"
 	else
@@ -545,13 +545,13 @@ Modify_ServerStatus_server_type(){
 Modify_ServerStatus_server_location(){
 	List_ServerStatus_server
 	echo -e "请输入要修改的节点用户名"
-	stty erase '^H' && read -p "(默认: 取消):" manually_username
+	read -e -p "(默认: 取消):" manually_username
 	[[ -z "${manually_username}" ]] && echo -e "已取消..." && exit 1
 	Set_username_num=$(cat -n ${server_conf}|grep '"username": "'"${manually_username}"'"'|awk '{print $1}')
 	if [[ ! -z ${Set_username_num} ]]; then
 		Set_location
-		Set_location_num_a=$(expr $Set_username_num + 5)
-		Set_location_num_a_text=$(sed -n "${Set_location_num_a}p" ${server_conf}|sed 's/\"//g;s/,//g'|awk -F ": " '{print $2}')
+		Set_location_num_a=$(echo $((${Set_username_num}+5)))
+		Set_location_num_a_text=$(sed -n "${Set_location_num_a}p" ${server_conf}|sed 's/\"//g;s/,$//g'|awk -F ": " '{print $2}')
 		sed -i "${Set_location_num_a}"'s/"location": "'"${Set_location_num_a_text}"'"/"location": "'"${location_s}"'"/g' ${server_conf}
 		echo -e "${Info} 修改成功 [ 原节点位置: ${Set_location_num_a_text}, 新节点位置: ${location_s} ]"
 	else
@@ -561,7 +561,7 @@ Modify_ServerStatus_server_location(){
 Modify_ServerStatus_server_all(){
 	List_ServerStatus_server
 	echo -e "请输入要修改的节点用户名"
-	stty erase '^H' && read -p "(默认: 取消):" manually_username
+	read -e -p "(默认: 取消):" manually_username
 	[[ -z "${manually_username}" ]] && echo -e "已取消..." && exit 1
 	Set_username_num=$(cat -n ${server_conf}|grep '"username": "'"${manually_username}"'"'|awk '{print $1}')
 	if [[ ! -z ${Set_username_num} ]]; then
@@ -571,17 +571,17 @@ Modify_ServerStatus_server_all(){
 		Set_type
 		Set_location
 		sed -i "${Set_username_num}"'s/"username": "'"${manually_username}"'"/"username": "'"${username_s}"'"/g' ${server_conf}
-		Set_password_num_a=$(expr $Set_username_num + 1)
-		Set_password_num_text=$(sed -n "${Set_password_num_a}p" ${server_conf}|sed 's/\"//g;s/,//g'|awk -F ": " '{print $2}')
+		Set_password_num_a=$(echo $((${Set_username_num}+1)))
+		Set_password_num_text=$(sed -n "${Set_password_num_a}p" ${server_conf}|sed 's/\"//g;s/,$//g'|awk -F ": " '{print $2}')
 		sed -i "${Set_password_num_a}"'s/"password": "'"${Set_password_num_text}"'"/"password": "'"${password_s}"'"/g' ${server_conf}
-		Set_name_num_a=$(expr $Set_username_num + 2)
-		Set_name_num_a_text=$(sed -n "${Set_name_num_a}p" ${server_conf}|sed 's/\"//g;s/,//g'|awk -F ": " '{print $2}')
+		Set_name_num_a=$(echo $((${Set_username_num}+2)))
+		Set_name_num_a_text=$(sed -n "${Set_name_num_a}p" ${server_conf}|sed 's/\"//g;s/,$//g'|awk -F ": " '{print $2}')
 		sed -i "${Set_name_num_a}"'s/"name": "'"${Set_name_num_a_text}"'"/"name": "'"${name_s}"'"/g' ${server_conf}
-		Set_type_num_a=$(expr $Set_username_num + 3)
-		Set_type_num_a_text=$(sed -n "${Set_type_num_a}p" ${server_conf}|sed 's/\"//g;s/,//g'|awk -F ": " '{print $2}')
+		Set_type_num_a=$(echo $((${Set_username_num}+3)))
+		Set_type_num_a_text=$(sed -n "${Set_type_num_a}p" ${server_conf}|sed 's/\"//g;s/,$//g'|awk -F ": " '{print $2}')
 		sed -i "${Set_type_num_a}"'s/"type": "'"${Set_type_num_a_text}"'"/"type": "'"${type_s}"'"/g' ${server_conf}
-		Set_location_num_a=$(expr $Set_username_num + 5)
-		Set_location_num_a_text=$(sed -n "${Set_location_num_a}p" ${server_conf}|sed 's/\"//g;s/,//g'|awk -F ": " '{print $2}')
+		Set_location_num_a=$(echo $((${Set_username_num}+5)))
+		Set_location_num_a_text=$(sed -n "${Set_location_num_a}p" ${server_conf}|sed 's/\"//g;s/,$//g'|awk -F ": " '{print $2}')
 		sed -i "${Set_location_num_a}"'s/"location": "'"${Set_location_num_a_text}"'"/"location": "'"${location_s}"'"/g' ${server_conf}
 		echo -e "${Info} 修改成功。"
 	else
@@ -591,12 +591,12 @@ Modify_ServerStatus_server_all(){
 Modify_ServerStatus_server_disabled(){
 	List_ServerStatus_server
 	echo -e "请输入要修改的节点用户名"
-	stty erase '^H' && read -p "(默认: 取消):" manually_username
+	read -e -p "(默认: 取消):" manually_username
 	[[ -z "${manually_username}" ]] && echo -e "已取消..." && exit 1
 	Set_username_num=$(cat -n ${server_conf}|grep '"username": "'"${manually_username}"'"'|awk '{print $1}')
 	if [[ ! -z ${Set_username_num} ]]; then
-		Set_disabled_num_a=$(expr $Set_username_num + 6)
-		Set_disabled_num_a_text=$(sed -n "${Set_disabled_num_a}p" ${server_conf}|sed 's/\"//g;s/,//g'|awk -F ": " '{print $2}')
+		Set_disabled_num_a=$(echo $((${Set_username_num}+6)))
+		Set_disabled_num_a_text=$(sed -n "${Set_disabled_num_a}p" ${server_conf}|sed 's/\"//g;s/,$//g'|awk -F ": " '{print $2}')
 		if [[ ${Set_disabled_num_a_text} == "false" ]]; then
 			disabled_s="true"
 		else
@@ -640,9 +640,11 @@ Install_jq(){
 Install_caddy(){
 	echo
 	echo -e "${Info} 是否由脚本自动配置HTTP服务(服务端的在线监控网站)，如果选择 N，则请在其他HTTP服务中配置网站根目录为：${Green_font_prefix}${web_file}${Font_color_suffix} [Y/n]"
-	stty erase '^H' && read -p "(默认: Y 自动部署):" caddy_yn
+	read -e -p "(默认: Y 自动部署):" caddy_yn
 	[[ -z "$caddy_yn" ]] && caddy_yn="y"
 	if [[ "${caddy_yn}" == [Yy] ]]; then
+		Set_server "server"
+		Set_server_http_port
 		if [[ ! -e "/usr/local/caddy/caddy" ]]; then
 			wget -N --no-check-certificate https://raw.githubusercontent.com/ToyoDAdoubi/doubi/master/caddy_install.sh
 			chmod +x caddy_install.sh
@@ -678,8 +680,6 @@ EOF
 }
 Install_ServerStatus_server(){
 	[[ -e "${server_file}/sergate" ]] && echo -e "${Error} 检测到 ServerStatus 服务端已安装 !" && exit 1
-	Set_server "server"
-	Set_server_http_port
 	Set_server_port
 	echo -e "${Info} 开始安装/配置 依赖..."
 	Installation_dependency "server"
@@ -696,7 +696,7 @@ Install_ServerStatus_server(){
 	Set_iptables
 	echo -e "${Info} 开始添加 iptables防火墙规则..."
 	Add_iptables "${server_port_s}"
-	Add_iptables "${server_http_port_s}"
+	[[ ! -z "${server_http_port_s}" ]] && Add_iptables "${server_http_port_s}"
 	echo -e "${Info} 开始保存 iptables防火墙规则..."
 	Save_iptables
 	echo -e "${Info} 所有步骤 安装完毕，开始启动..."
@@ -704,6 +704,19 @@ Install_ServerStatus_server(){
 }
 Install_ServerStatus_client(){
 	[[ -e "${client_file}/status-client.py" ]] && echo -e "${Error} 检测到 ServerStatus 客户端已安装 !" && exit 1
+	check_sys
+	if [[ ${release} == "centos" ]]; then
+		cat /etc/redhat-release |grep 7\..*|grep -i centos>/dev/null
+		if [[ $? != 0 ]]; then
+			echo -e "${Info} 检测到你的系统为 CentOS6，该系统自带的 Python2.6 版本过低，会导致无法运行客户端，如果你有能力升级为 Python2.7，那么请继续(否则建议更换系统)：[y/N]"
+			read -e -p "(默认: N 继续安装):" sys_centos6
+			[[ -z "$sys_centos6" ]] && sys_centos6="n"
+			if [[ "${sys_centos6}" == [Nn] ]]; then
+				echo -e "\n${Info} 已取消...\n"
+				exit 1
+			fi
+		fi
+	fi
 	echo -e "${Info} 开始设置 用户配置..."
 	Set_config_client
 	echo -e "${Info} 开始安装/配置 依赖..."
@@ -780,7 +793,7 @@ Uninstall_ServerStatus_server(){
 	check_installed_server_status
 	echo "确定要卸载 ServerStatus 服务端(如果同时安装了客户端，则只会删除服务端) ? [y/N]"
 	echo
-	stty erase '^H' && read -p "(默认: n):" unyn
+	read -e -p "(默认: n):" unyn
 	[[ -z ${unyn} ]] && unyn="n"
 	if [[ ${unyn} == [Yy] ]]; then
 		check_pid_server
@@ -833,7 +846,7 @@ Uninstall_ServerStatus_client(){
 	check_installed_client_status
 	echo "确定要卸载 ServerStatus 客户端(如果同时安装了服务端，则只会删除客户端) ? [y/N]"
 	echo
-	stty erase '^H' && read -p "(默认: n):" unyn
+	read -e -p "(默认: n):" unyn
 	[[ -z ${unyn} ]] && unyn="n"
 	if [[ ${unyn} == [Yy] ]]; then
 		check_pid_client
@@ -917,15 +930,8 @@ Set_iptables(){
 	fi
 }
 Update_Shell(){
-	softs_domain=$(wget --no-check-certificate -qO- -t1 -T3 "https://doub.pw/new_softs.txt")
-	if [[ -z ${softs_domain} ]]; then
-		softs_domain="https://raw.githubusercontent.com/ToyoDAdoubi/doubi/master/"
-	else
-		softs_domain="https://${softs_domain}/Bash/"
-	fi
-	sh_new_ver=$(wget --no-check-certificate -qO- -t1 -T3 "${softs_domain}status.sh"|grep 'sh_ver="'|awk -F "=" '{print $NF}'|sed 's/\"//g'|head -1) && sh_new_type="softs"
-	[[ -z ${sh_new_ver} ]] && sh_new_ver=$(wget --no-check-certificate -qO- -t1 -T3 "https://raw.githubusercontent.com/ToyoDAdoubi/doubi/master/status.sh"|grep 'sh_ver="'|awk -F "=" '{print $NF}'|sed 's/\"//g'|head -1) && sh_new_type="github"
-	[[ -z ${sh_new_ver} ]] && echo -e "${Error} 无法链接到 逗比云 或 Github !" && exit 0
+	sh_new_ver=$(wget --no-check-certificate -qO- -t1 -T3 "https://raw.githubusercontent.com/ToyoDAdoubi/doubi/master/status.sh"|grep 'sh_ver="'|awk -F "=" '{print $NF}'|sed 's/\"//g'|head -1) && sh_new_type="github"
+	[[ -z ${sh_new_ver} ]] && echo -e "${Error} 无法链接到 Github !" && exit 0
 	if [[ -e "/etc/init.d/status-client" ]]; then
 		rm -rf /etc/init.d/status-client
 		Service_Server_Status_client
@@ -934,11 +940,7 @@ Update_Shell(){
 		rm -rf /etc/init.d/status-server
 		Service_Server_Status_server
 	fi
-	if [[ $sh_new_type == "softs" ]]; then
-		wget -N --no-check-certificate "${softs_domain}status.sh" && chmod +x status.sh
-	else
-		wget -N --no-check-certificate "https://raw.githubusercontent.com/ToyoDAdoubi/doubi/master/status.sh" && chmod +x status.sh
-	fi
+	wget -N --no-check-certificate "https://raw.githubusercontent.com/ToyoDAdoubi/doubi/master/status.sh" && chmod +x status.sh
 	echo -e "脚本已更新为最新版本[ ${sh_new_ver} ] !(注意：因为更新方式为直接覆盖当前运行的脚本，所以可能下面会提示一些报错，无视即可)" && exit 0
 }
 menu_client(){
@@ -980,7 +982,7 @@ else
 	fi
 fi
 echo
-stty erase '^H' && read -p " 请输入数字 [0-10]:" num
+read -e -p " 请输入数字 [0-10]:" num
 case "$num" in
 	0)
 	Update_Shell
@@ -1050,7 +1052,7 @@ else
 	echo -e " 当前状态: 服务端 ${Red_font_prefix}未安装${Font_color_suffix}"
 fi
 echo
-stty erase '^H' && read -p " 请输入数字 [0-10]:" num
+read -e -p " 请输入数字 [0-10]:" num
 case "$num" in
 	0)
 	Update_Shell
