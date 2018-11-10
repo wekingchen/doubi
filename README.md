@@ -1,14 +1,20 @@
 # 一个逗比写的逗比脚本
 
+![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)
+[![GitHub stars](https://img.shields.io/github/stars/ToyoDAdoubi/doubi.svg?style=popout&label=Stars)](https://github.com/ToyoDAdoubi/doubi/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/ToyoDAdoubi/doubi.svg?style=popout&label=Fork)](https://github.com/ToyoDAdoubi/doubi/fork)
 ## 脚本索引
 
 * [***代理相关***](#代理相关)
+  * [ss-go.sh](#ss_gosh)
   * [ssr.sh](#ssrsh)
   * [ssrmu.sh](#ssrmush)
   * [brook.sh](#brooksh)
   * [goflyway.sh](#goflywaysh)
+  * [daze.sh](#dazesh)
   * [lightsocks.sh](#lightsockssh)
   * [mtproxy.sh](#mtproxysh)
+  * [mtproxy_go.sh](#mtproxy_gosh)
 * [***中转相关***](#中转相关)
   * [iptables-pf.sh](#iptables-pfsh)
   * [brook-pf.sh](#brook-pfsh)
@@ -33,6 +39,7 @@
   * [pythonhttp.sh](#pythonhttpsh)
 * [***其他***](#其他)
   * [adbyby.sh](#adbybysh)
+  * [gfw_push.sh](#gfw_pushsh)
   * [libsodium.sh](#libsodiumsh)
   * [ssrstatus.sh](#ssrstatussh)
   * [ssr_check.sh](#ssr_checksh)
@@ -42,9 +49,25 @@
 
 ## 代理相关
 
+## ss_go.sh
+
+- 脚本说明: Shadowsocks 一键安装管理脚本
+- 系统支持: CentOS6+ / Debian6+ / Ubuntu14+
+- 使用方法: https://doub.io/ss-jc67/
+- 项目地址: https://github.com/shadowsocks/go-shadowsocks2
+
+#### 脚本特点:
+目前网上的各个Shadowsocks脚本基本都是只有 安装/启动/重启 等基础功能，对于小白来说还是不够简单方便。既然是一键脚本，那么就要尽可能地简单，小白更容易接受使用！
+
+#### 下载安装:
+``` bash
+wget -N --no-check-certificate https://raw.githubusercontent.com/ToyoDAdoubi/doubi/master/ss-go.sh && chmod +x ss-go.sh && bash ss-go.sh
+```
+
+---
 ## ssr.sh
 
-- 脚本说明: ShadowsocksR 一键安装/管理脚本，支持单端口/多端口切换和管理
+- 脚本说明: ShadowsocksR 一键安装管理脚本，支持单端口/多端口切换和管理
 - 系统支持: CentOS6+ / Debian6+ / Ubuntu14+
 - 使用方法: https://doub.io/ss-jc42/
 - 项目地址: https://github.com/ToyoDAdoubi/shadowsocksr
@@ -69,7 +92,7 @@ wget -N --no-check-certificate https://raw.githubusercontent.com/ToyoDAdoubi/dou
 ---
 ## ssrmu.sh
 
-- 脚本说明: ShadowsocksR 一键安装/管理脚本，支持流量控制
+- 脚本说明: ShadowsocksR 一键安装管理脚本，支持流量控制
 - 系统支持: CentOS6+ / Debian6+ / Ubuntu14+
 - 使用方法: https://doub.io/ss-jc60/
 - 项目地址: https://github.com/ToyoDAdoubi/shadowsocksr
@@ -95,7 +118,7 @@ wget -N --no-check-certificate https://raw.githubusercontent.com/ToyoDAdoubi/dou
 ---
 ## brook.sh
 
-- 脚本说明: Brook 一键安装脚本
+- 脚本说明: Brook 一键安装管理脚本
 - 系统支持: CentOS6+ / Debian7+ / Ubuntu14+
 - 使用方法: https://doub.io/brook-jc3/
 
@@ -107,7 +130,7 @@ wget -N --no-check-certificate https://raw.githubusercontent.com/ToyoDAdoubi/dou
 ---
 ## goflyway.sh
 
-- 脚本说明: GoFlyway 一键安装脚本
+- 脚本说明: GoFlyway 一键安装管理脚本
 - 系统支持: CentOS6+ / Debian7+ / Ubuntu14+
 - 使用方法: https://doub.io/goflyway-jc2/
 
@@ -119,7 +142,7 @@ wget -N --no-check-certificate https://raw.githubusercontent.com/ToyoDAdoubi/dou
 ---
 ## lightsocks.sh
 
-- 脚本说明: LightSocks 一键安装脚本
+- 脚本说明: LightSocks 一键安装管理脚本
 - 系统支持: CentOS6+ / Debian7+ / Ubuntu14+
 - 使用方法: https://doub.io/lightsocks-jc1/
 
@@ -129,9 +152,21 @@ wget -N --no-check-certificate https://raw.githubusercontent.com/ToyoDAdoubi/dou
 ```
 
 ---
+## daze.sh
+
+- 脚本说明: DAZE 一键安装管理脚本
+- 系统支持: CentOS6+ / Debian7+ / Ubuntu14+
+- 使用方法: https://doub.io/daze-jc3/
+
+#### 下载安装:
+``` bash
+wget -N --no-check-certificate https://raw.githubusercontent.com/ToyoDAdoubi/doubi/master/daze.sh && chmod +x daze.sh && bash daze.sh
+```
+
+---
 ## mtproxy.sh
 
-- 脚本说明: Mtproto Proxy 一键安装脚本
+- 脚本说明: Mtproto Proxy 一键安装管理脚本
 - 系统支持: CentOS7 / Debian7+ / Ubuntu14+
 - 使用方法: https://doub.io/shell-jc7/
 
@@ -141,12 +176,24 @@ wget -N --no-check-certificate https://raw.githubusercontent.com/ToyoDAdoubi/dou
 ```
 
 ---
+## mtproxy_go.sh
+
+- 脚本说明: Mtproto Proxy Go版 一键安装管理脚本
+- 系统支持: CentOS6+ / Debian7+ / Ubuntu14+
+- 使用方法: https://doub.io/shell-jc9/
+
+#### 下载安装:
+``` bash
+wget -N --no-check-certificate https://raw.githubusercontent.com/ToyoDAdoubi/doubi/master/mtproxy_go.sh && chmod +x mtproxy_go.sh && bash mtproxy_go.sh
+```
+
+---
 
 ## 中转相关
 
 ## iptables-pf.sh
 
-- 脚本说明: iptables 端口转发 一键安装/管理脚本
+- 脚本说明: iptables 端口转发 一键安装管理脚本
 - 系统支持: CentOS6+ / Debian6+ / Ubuntu14+
 - 使用方法: https://doub.io/wlzy-20/
 
@@ -158,7 +205,7 @@ wget -N --no-check-certificate https://raw.githubusercontent.com/ToyoDAdoubi/dou
 ---
 ## brook-pf.sh
 
-- 脚本说明: Brook 端口转发 一键安装/管理脚本
+- 脚本说明: Brook 端口转发 一键安装管理脚本
 - 系统支持: CentOS6+ / Debian6+ / Ubuntu14+
 - 使用方法: https://doub.io/wlzy-37/
 
@@ -170,7 +217,7 @@ wget -N --no-check-certificate https://raw.githubusercontent.com/ToyoDAdoubi/dou
 ---
 ## haproxy.sh
 
-- 脚本说明: HaProxy 一键安装/管理脚本
+- 脚本说明: HaProxy 一键安装管理脚本
 - 系统支持: CentOS6+ / Debian6+ / Ubuntu14+
 - 使用方法: https://doub.io/wlzy-19/
 
@@ -182,7 +229,7 @@ wget -N --no-check-certificate https://raw.githubusercontent.com/ToyoDAdoubi/dou
 ---
 ## socat.sh
 
-- 脚本说明: Socat 一键安装/管理脚本
+- 脚本说明: Socat 一键安装管理脚本
 - 系统支持: CentOS6+ / Debian6+ / Ubuntu14+
 - 使用方法: https://doub.io/wlzy-18/
 
@@ -194,7 +241,7 @@ wget -N --no-check-certificate https://raw.githubusercontent.com/ToyoDAdoubi/dou
 ---
 ## tinymapper.sh
 
-- 脚本说明: tinyPortMapper 一键安装/管理脚本
+- 脚本说明: tinyPortMapper 一键安装管理脚本
 - 系统支持: CentOS6+ / Debian6+ / Ubuntu14+
 - 使用方法: https://doub.io/wlzy-36/
 
@@ -209,7 +256,7 @@ wget -N --no-check-certificate https://raw.githubusercontent.com/ToyoDAdoubi/dou
 
 ## aria2.sh
 
-- 脚本说明: Aria2 一键安装脚本
+- 脚本说明: Aria2 一键安装管理脚本
 - 系统支持: CentOS6+ / Debian6+ / Ubuntu14+
 - 使用方法: https://doub.io/shell-jc4/
 
@@ -221,7 +268,7 @@ wget -N --no-check-certificate https://raw.githubusercontent.com/ToyoDAdoubi/dou
 ---
 ## cloudt.sh
 
-- 脚本说明: Cloud Torrent 一键安装脚本
+- 脚本说明: Cloud Torrent 一键安装管理脚本
 - 系统支持: CentOS6+ / Debian6+ / Ubuntu14+
 - 使用方法: https://doub.io/wlzy-12/
 - 项目地址: https://github.com/jpillora/cloud-torrent
@@ -234,7 +281,7 @@ wget -N --no-check-certificate https://raw.githubusercontent.com/ToyoDAdoubi/dou
 ---
 ## pserver.sh
 
-- 脚本说明: Peerflix Server 一键安装脚本
+- 脚本说明: Peerflix Server 一键安装管理脚本
 - 系统支持: CentOS6+ / Debian6+ / Ubuntu14+
 - 使用方法: https://doub.io/wlzy-13/
 - 项目地址: https://github.com/asapach/peerflix-server
@@ -250,7 +297,7 @@ wget -N --no-check-certificate https://raw.githubusercontent.com/ToyoDAdoubi/dou
 
 ## bbr.sh
 
-- 脚本说明: BBR 一键安装脚本
+- 脚本说明: BBR 一键安装管理脚本
 - 系统支持: Debian6+ / Ubuntu14+
 - 使用方法: https://doub.io/wlzy-16/
 
@@ -262,7 +309,7 @@ wget -N --no-check-certificate https://raw.githubusercontent.com/ToyoDAdoubi/dou
 ---
 ## status.sh
 
-- 脚本说明: ServerStatus 一键安装/管理脚本
+- 脚本说明: ServerStatus 一键安装管理脚本
 - 系统支持: CentOS6+ / Debian6+ / Ubuntu14+
 - 使用方法: https://doub.io/shell-jc3/
 
@@ -301,7 +348,7 @@ wget -N --no-check-certificate https://raw.githubusercontent.com/ToyoDAdoubi/dou
 
 ## ocserv.sh
 
-- 脚本说明: Ocserv AnyConnect 一键安装脚本
+- 脚本说明: Ocserv AnyConnect 一键安装管理脚本
 - 系统支持: Debian7+ / Ubuntu14+
 - 使用方法: https://doub.io/vpnzy-7/
 
@@ -316,7 +363,7 @@ wget -N --no-check-certificate https://raw.githubusercontent.com/ToyoDAdoubi/dou
 
 ## dowsdns.sh
 
-- 脚本说明: DowsDNS 一键安装脚本
+- 脚本说明: DowsDNS 一键安装管理脚本
 - 系统支持: CentOS7 / Debian7+ / Ubuntu14+
 - 使用方法: https://doub.io/dowsdns-jc3/
 
@@ -350,7 +397,7 @@ wget -N --no-check-certificate https://raw.githubusercontent.com/ToyoDAdoubi/dou
 ---
 ## pythonhttp.sh
 
-- 脚本说明: SimpleHTTPServer 一键安装/管理脚本
+- 脚本说明: SimpleHTTPServer 一键安装管理脚本
 - 系统支持: CentOS6+ / Debian6+ / Ubuntu14+
 - 使用方法: https://doub.io/wlzy-8/
 
@@ -365,7 +412,7 @@ wget -N --no-check-certificate https://raw.githubusercontent.com/ToyoDAdoubi/dou
 
 ## adbyby.sh
 
-- 脚本说明: ADbyby 一键安装脚本
+- 脚本说明: ADbyby 一键安装管理脚本
 - 系统支持: CentOS6+ / Debian6+ / Ubuntu14+
 - 使用方法: https://doub.io/adbyby-jc2/
 
@@ -374,10 +421,21 @@ wget -N --no-check-certificate https://raw.githubusercontent.com/ToyoDAdoubi/dou
 wget -N --no-check-certificate https://raw.githubusercontent.com/ToyoDAdoubi/doubi/master/adbyby.sh && chmod +x adbyby.sh && bash adbyby.sh
 ```
 
+## gfw_push.sh
+
+- 脚本说明: 监测服务器IP是否被墙并推送至 Telegram 一键脚本
+- 系统支持: CentOS6+ / Debian6+ / Ubuntu14+
+- 使用方法: https://doub.io/shell-jc8/
+
+#### 下载安装:
+``` bash
+wget -N --no-check-certificate https://raw.githubusercontent.com/ToyoDAdoubi/doubi/master/gfw_push.sh && chmod +x gfw_push.sh && bash gfw_push.sh
+```
+
 ---
 ## libsodium.sh
 
-- 脚本说明: libsodium 一键安装脚本
+- 脚本说明: libsodium 一键安装管理脚本
 - 系统支持: CentOS6+ / Debian6+ / Ubuntu14+
 - 使用方法: https://doub.io/shell-jc6/
 
@@ -425,7 +483,7 @@ wget -N --no-check-certificate https://raw.githubusercontent.com/ToyoDAdoubi/dou
 ---
 ## ~~pipes.sh~~
 
-- 脚本说明: PipeSocks 一键安装脚本（该软件已停更）
+- 脚本说明: PipeSocks 一键安装管理脚本（该软件已停更）
 - 系统支持: CentOS7 / Debian7+ / Ubuntu14+
 - 使用方法: https://doub.io/pipesocks-jc2/
 
@@ -437,7 +495,7 @@ wget -N --no-check-certificate https://raw.githubusercontent.com/pipesocks/insta
 ---
 ## ~~gogo.sh~~
 
-- 脚本说明: GoGo Tunnel 一键安装脚本（该软件已停更）
+- 脚本说明: GoGo Tunnel 一键安装管理脚本（该软件已停更）
 - 系统支持: CentOS6+ / Debian6+ / Ubuntu14+
 - 使用方法: https://doub.io/wlzy-24/
 

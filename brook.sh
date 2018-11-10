@@ -65,7 +65,7 @@ check_crontab_installed_status(){
 	fi
 }
 check_pid(){
-	PID=$(ps -ef| grep "./brook "| grep -v "grep" | grep -v "init.d" |grep -v "service" |awk '{print $2}')
+	PID=$(ps -ef| grep "./brook "| grep -v "grep" | grep -v "brook.sh" | grep -v "init.d" |grep -v "service" |awk '{print $2}')
 }
 check_new_ver(){
 	echo -e "请输入要下载安装的 Brook 版本号 ${Green_font_prefix}[ 格式是日期，例如: v20180707 ]${Font_color_suffix}
@@ -107,20 +107,20 @@ Download_brook(){
 		wget --no-check-certificate -N "https://github.com/txthinking/brook/releases/download/${brook_new_ver}/brook_linux_386"
 		mv brook_linux_386 brook
 	fi
-	[[ ! -e "brook" ]] && echo -e "${Error} Brook 下载失败 !" && exit 1
+	[[ ! -e "brook" ]] && echo -e "${Error} Brook 下载失败 !" && rm -rf "${file}" && exit 1
 	chmod +x brook
 }
 Service_brook(){
 	if [[ ${release} = "centos" ]]; then
 		if ! wget --no-check-certificate "https://raw.githubusercontent.com/ToyoDAdoubi/doubi/master/service/brook_centos" -O /etc/init.d/brook; then
-			echo -e "${Error} Brook服务 管理脚本下载失败 !" && exit 1
+			echo -e "${Error} Brook服务 管理脚本下载失败 !" && rm -rf "${file}" && exit 1
 		fi
 		chmod +x "/etc/init.d/brook"
 		chkconfig --add brook
 		chkconfig brook on
 	else
 		if ! wget --no-check-certificate "https://raw.githubusercontent.com/ToyoDAdoubi/doubi/master/service/brook_debian" -O /etc/init.d/brook; then
-			echo -e "${Error} Brook服务 管理脚本下载失败 !" && exit 1
+			echo -e "${Error} Brook服务 管理脚本下载失败 !" && rm -rf "${file}" && exit 1
 		fi
 		chmod +x "/etc/init.d/brook"
 		update-rc.d -f brook defaults
@@ -408,6 +408,7 @@ Uninstall_brook(){
 					port=$(echo "${user_text}"|awk '{print $1}')
 					Del_iptables
 				done
+				Save_iptables
 			fi
 		fi
 		if [[ ! -z $(crontab -l | grep "brook.sh monitor") ]]; then

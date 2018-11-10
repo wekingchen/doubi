@@ -5,11 +5,11 @@ export PATH
 #=================================================
 #	System Required: CentOS/Debian/Ubuntu
 #	Description: Aria2
-#	Version: 1.1.9
+#	Version: 1.1.10
 #	Author: Toyo
 #	Blog: https://doub.io/shell-jc4/
 #=================================================
-sh_ver="1.1.9"
+sh_ver="1.1.10"
 filepath=$(cd "$(dirname "$0")"; pwd)
 file_1=$(echo -e "${filepath}"|awk -F "$0" '{print $1}')
 file="/root/.aria2"
@@ -66,16 +66,22 @@ check_crontab_installed_status(){
 	fi
 }
 check_pid(){
-	PID=`ps -ef| grep "aria2c"| grep -v grep| grep -v ".sh"| grep -v "init.d"| grep -v "service"| awk '{print $2}'`
+	PID=`ps -ef| grep "aria2c"| grep -v grep| grep -v "aria2.sh"| grep -v "init.d"| grep -v "service"| awk '{print $2}'`
 }
 check_new_ver(){
-	aria2_new_ver=$(wget --no-check-certificate -qO- https://api.github.com/repos/q3aql/aria2-static-builds/releases | grep -o '"tag_name": ".*"' |head -n 1| sed 's/"//g;s/v//g' | sed 's/tag_name: //g')
+	echo -e "${Info} 请输入 Aria2 版本号，格式如：[ 1.34.0 ]，获取地址：[ https://github.com/q3aql/aria2-static-builds/releases ]"
+	read -e -p "默认回车自动获取最新版本号:" aria2_new_ver
 	if [[ -z ${aria2_new_ver} ]]; then
-		echo -e "${Error} Aria2 最新版本获取失败，请手动获取最新版本号[ https://github.com/q3aql/aria2-static-builds/releases ]"
-		read -e -p "请输入版本号 [ 格式如 1.34.0 ] :" aria2_new_ver
-		[[ -z "${aria2_new_ver}" ]] && echo "取消..." && exit 1
+		aria2_new_ver=$(wget --no-check-certificate -qO- https://api.github.com/repos/q3aql/aria2-static-builds/releases | grep -o '"tag_name": ".*"' |head -n 1| sed 's/"//g;s/v//g' | sed 's/tag_name: //g')
+		if [[ -z ${aria2_new_ver} ]]; then
+			echo -e "${Error} Aria2 最新版本获取失败，请手动获取最新版本号[ https://github.com/q3aql/aria2-static-builds/releases ]"
+			read -e -p "请输入版本号 [ 格式如 1.34.0 ] :" aria2_new_ver
+			[[ -z "${aria2_new_ver}" ]] && echo "取消..." && exit 1
+		else
+			echo -e "${Info} 检测到 Aria2 最新版本为 [ ${aria2_new_ver} ]"
+		fi
 	else
-		echo -e "${Info} 检测到 Aria2 最新版本为 [ ${aria2_new_ver} ]"
+		echo -e "${Info} 即将准备下载 Aria2 版本为 [ ${aria2_new_ver} ]"
 	fi
 }
 check_ver_comparison(){
@@ -99,19 +105,16 @@ Download_aria2(){
 	update_dl=$1
 	cd "/usr/local"
 	#echo -e "${bit}"
-	if [[ ${bit} == "armv7l" ]]; then
-		wget -N --no-check-certificate "https://github.com/q3aql/aria2-static-builds/releases/download/v${aria2_new_ver}/aria2-${aria2_new_ver}-linux-gnu-arm-rbpi-build1.tar.bz2"
-		Aria2_Name="aria2-${aria2_new_ver}-linux-gnu-arm-rbpi-build1"
-	elif [[ ${bit} == "aarch64" ]]; then
-		wget -N --no-check-certificate "https://github.com/q3aql/aria2-static-builds/releases/download/v${aria2_new_ver}/aria2-${aria2_new_ver}-linux-gnu-arm-rbpi-build1.tar.bz2"
-		Aria2_Name="aria2-${aria2_new_ver}-linux-gnu-arm-rbpi-build1"
-	elif [[ ${bit} == "x86_64" ]]; then
-		wget -N --no-check-certificate "https://github.com/q3aql/aria2-static-builds/releases/download/v${aria2_new_ver}/aria2-${aria2_new_ver}-linux-gnu-64bit-build1.tar.bz2"
-		Aria2_Name="aria2-${aria2_new_ver}-linux-gnu-64bit-build1"
+	if [[ ${bit} == "x86_64" ]]; then
+		bit="64bit"
+	elif [[ ${bit} == "i386" || ${bit} == "i686" ]]; then
+		bit="32bit"
 	else
-		wget -N --no-check-certificate "https://github.com/q3aql/aria2-static-builds/releases/download/v${aria2_new_ver}/aria2-${aria2_new_ver}-linux-gnu-32bit-build1.tar.bz2"
-		Aria2_Name="aria2-${aria2_new_ver}-linux-gnu-32bit-build1"
+		bit="arm-rbpi"
 	fi
+	wget -N --no-check-certificate "https://github.com/q3aql/aria2-static-builds/releases/download/v${aria2_new_ver}/aria2-${aria2_new_ver}-linux-gnu-${bit}-build1.tar.bz2"
+	Aria2_Name="aria2-${aria2_new_ver}-linux-gnu-${bit}-build1"
+	
 	[[ ! -s "${Aria2_Name}.tar.bz2" ]] && echo -e "${Error} Aria2 压缩包下载失败 !" && exit 1
 	tar jxvf "${Aria2_Name}.tar.bz2"
 	[[ ! -e "/usr/local/${Aria2_Name}" ]] && echo -e "${Error} Aria2 解压失败 !" && rm -rf "${Aria2_Name}.tar.bz2" && exit 1
